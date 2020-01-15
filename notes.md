@@ -7,4 +7,4 @@ Types
 Type (how we use it)
 
 - global: applies to all requests
-- local: 
+- local: applies to a set of routes 

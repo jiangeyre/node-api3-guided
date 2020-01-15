@@ -7,6 +7,8 @@ const server = express();
 // global middleware (cares about all requests)
 server.use(express.json());
 
+// write a middleware called uppercaser, that takes the name from the body and makes it uppercase before it makes it to the resquest handler/router. Only apply that middleware to routes that begin with /api/hubs
+
 function logger(req, res, next) {
   const { method, originalUrl } = req;
   console.log(`${method} to ${originalUrl}`);
@@ -18,7 +20,7 @@ server.use(logger);
 
 // build the echo mw, that will simply retrun whatever is sent in the body
 function echo(req, res, next) {
-  console.log(`${req.body}`);
+  console.log(req.body);
 
   next();
 };
@@ -27,6 +29,15 @@ server.use(echo);
 
 // write a gatekeeper mw that reads a pw from the headers, if the pw is "mellon", let the request continue
 // if the pw is wrong, then return status code 401 and an object like this: { you: "cannot pass!" }
+function gatekeeper(req, res, next) {
+  if(req.headers.password === 'mellon') {
+    next();
+  } else {
+    res.status(401).json({ message: "YOU SHALL NOT PASS."});
+  }
+};
+
+server.use(gatekeeper);
 
 // cares only about requests beginning with /api/hubs
 server.use('/api/hubs', hubsRouter);
